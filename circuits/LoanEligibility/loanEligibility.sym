@@ -1,0 +1,4 @@
+1,1,0,main.isValid
+2,2,0,main.collateral
+3,3,0,main.expectedCollateral
+4,4,0,main.diff
