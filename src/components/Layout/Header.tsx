@@ -10,9 +10,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { useDisconnect } from "@reown/appkit/react";
+import { useRouter } from "next/router";
 
 export const Header = () => {
   const { disconnect } = useDisconnect();
+  const router = useRouter();
 
   return (
     <DropdownMenu>
@@ -36,6 +38,7 @@ export const Header = () => {
           className="cursor-pointer"
           onClick={() => {
             disconnect();
+            router.push("/");
           }}
         >
           Log out
