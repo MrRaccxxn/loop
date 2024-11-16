@@ -3,7 +3,7 @@
 #!/bin/bash
 
 # Variable to store the name of the circuit
-CIRCUIT=''
+CIRCUIT='loanEligibility'
 
 FOLDER_PATH='build'
 

@@ -3,13 +3,24 @@ pragma solidity ^0.8.0;
 
 import "@pythnetwork/pyth-sdk-solidity/IPyth.sol";
 
+interface ILoanEligibilityVerifier {
+    function verifyProof(
+        uint256[2] memory a,
+        uint256[2][2] memory b,
+        uint256[2] memory c,
+        uint256[1] memory input
+    ) external view returns (bool);
+}
+
 contract MicroLoans {
     IPyth pyth;
     bytes32 celoUsdPriceId;
+    ILoanEligibilityVerifier public verifier;
 
-    constructor(address _pyth, bytes32 _celoUsdPriceId) {
+    constructor(address _pyth, bytes32 _celoUsdPriceId, address _verifier) {
         pyth = IPyth(_pyth);
         celoUsdPriceId = _celoUsdPriceId;
+        verifier = ILoanEligibilityVerifier(_verifier);
     }
 
     struct Loan {
@@ -47,8 +58,14 @@ contract MicroLoans {
     function requestLoan(
         uint256 loanAmount,
         uint256 collateral,
-        LoanType loanType
+        LoanType loanType,
+        uint256[2] memory a,
+        uint256[2][2] memory b,
+        uint256[2] memory c,
+        uint256[1] memory input
     ) public payable {
+        require(verifier.verifyProof(a, b, c, input), "Proof denied");
+
         if (loanType == LoanType.Collateral) {
             require(
                 msg.value == collateral,
@@ -90,6 +107,8 @@ contract MicroLoans {
             emit LoanRequested(loanCounter, msg.sender, loanAmount, collateral);
             loanCounter++;
         }
+
+        if (loanType == LoanType.ProofOfHistoric) {}
     }
 
     // Lender accepts the loan

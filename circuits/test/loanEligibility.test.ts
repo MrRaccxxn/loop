@@ -7,18 +7,18 @@ describe("Loan Eligibility circuit", function () {
   let loanEligibilityCircuit;
 
   before(async function () {
-    loanEligibilityCircuit = await wasm_tester("./loanEligibility.circom");
+    loanEligibilityCircuit = await wasm_tester("./circuit/loanEligibility.circom");
   });
 
   it("Should generate the witness successfully", async function () {
     const input = {
       "loanAmount": "1000", 
       "collateral": "2000000000000000000",  
-      "useCollateralVerification": 1,              // Enabling collateral verification
-      "minCollateral": "1000000000000000000",      // 1 CELO, 18 decimal places
-      "amounts": ["500000000000000000", "600000000000000000", "400000000000000000"],  // Exactly 3 transaction amounts
-      "timestamps": ["1609459200", "1640995200", "1682467200"],  // Transaction timestamps: all at least 1 year old
-      "minCumulative": "1000000000000000000",      // Cumulative amount of 1 CELO
+      "useCollateralVerification": 1,            
+      "minCollateral": "1000000000000000000",    
+      "amounts": ["500000000000000000", "600000000000000000", "400000000000000000"],  
+      "timestamps": ["1609459200", "1640995200", "1682467200"],  
+      "minCumulative": "1000000000000000000",    
       "minDate" : "0",
     };
     const witness = await loanEligibilityCircuit.calculateWitness(input);

@@ -3,14 +3,14 @@
 #!/bin/bash
 
 # Variable to store the name of the circuit
-CIRCUIT=''
+CIRCUIT='loanEligibility'
 
 FOLDER_PATH='keys'
 
 BUILD='build'
 
 # Variable to store the number of the ptau file
-PTAU=15
+PTAU=8
 
 # In case there is a circuit name as an input
 if [ "$1" ]; then
