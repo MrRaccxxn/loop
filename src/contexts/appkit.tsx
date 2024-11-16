@@ -2,10 +2,10 @@
 
 import { createAppKit } from "@reown/appkit/react";
 import { EthersAdapter } from "@reown/appkit-adapter-ethers";
-import {  celoAlfajores, celo } from "@reown/appkit/networks";
+import { celoAlfajores, flowTestnet } from "@reown/appkit/networks";
 import { ReactNode } from "react";
 
-const projectId = process.env.NEXT_PUBLIC_PRIVY_WALLET_CONNECT_APP_ID ?? "";
+const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_APP_ID ?? "";
 
 // 2. Create a metadata object
 const metadata = {
@@ -19,7 +19,7 @@ const metadata = {
 createAppKit({
   adapters: [new EthersAdapter()],
   metadata,
-  networks: [celoAlfajores, celo],
+  networks: [celoAlfajores, flowTestnet],
   projectId,
 });
 

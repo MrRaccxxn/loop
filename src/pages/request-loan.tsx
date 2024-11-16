@@ -1,10 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { VscChevronRight } from "react-icons/vsc";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useImmer } from "use-immer";
-
+import { useWriteContract } from "wagmi";
 import Image from "next/image";
-import { useAppKit } from "@reown/appkit/react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
@@ -13,17 +11,19 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import DropdownZone from "@/components/DropdownZone";
 import { DragNDrop } from "@/components/DragNDrop";
 import { z } from "zod";
+import { chainContractConfig } from "@/contexts/chainContext";
+import { useLoanStore } from "@/hooks/useLoanStore";
+import web3 from "web3";
 
-const LoanPeriod = z.enum(["3", "6", "12", "24"]);
+const LoanPeriod = z.enum(["1", "3", "6", "12", "24"]);
 export type LoanPeriod = z.infer<typeof LoanPeriod>;
 
 const LoanMethod = z.enum(["COLLATERAL", "BANK_STATEMENT"]);
@@ -39,10 +39,9 @@ export type RequestLoanInput = z.infer<typeof RequestLoanInput>;
 
 export default function RequestLoan() {
   const router = useRouter();
-  const [step, setStep] = useState(1);
+  const { step, setStep } = useLoanStore();
 
-  const { register, setValue, handleSubmit, getValues } =
-    useForm<RequestLoanInput>();
+  const { setValue, getValues } = useForm<RequestLoanInput>();
 
   const [formValues, setFormValues] = useImmer<RequestLoanInput>({
     amount: 0,
@@ -50,23 +49,28 @@ export default function RequestLoan() {
     period: null,
   });
 
-  const submitFunction = () => {
-    console.log("la data enviada es:");
-  };
-
   const isAllowedToContinueForm = useMemo(() => {
     if (step === 1) {
-        if (formValues.amount < 1 || formValues.amount > 1000) return false;
-        if (!formValues.period) return false;
-      }
-  
-      if (step === 2) {
-        return true;
-      }
-  
-      return true;
-  }, [step, formValues])
+      if (formValues.amount < 1 || formValues.amount > 1000) return false;
+      if (!formValues.period) return false;
+    }
 
+    if (step === 2) {
+      return true;
+    }
+
+    return true;
+  }, [step, formValues]);
+
+  const calculateCollateral = useMemo(() => {
+    return formValues.amount + formValues.amount * 0.05;
+  }, [formValues.amount]);
+
+  const { writeContract, isPending, error, isSuccess } = useWriteContract();
+
+  useEffect(() => {
+    if (isSuccess) router.push("/home");
+  }, [isSuccess]);
   return (
     <div className="bg-purple-800 w-full h-full bg-white">
       <div className="h-[30%] w-full bg-[#EFC950] relative">
@@ -150,11 +154,11 @@ export default function RequestLoan() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectItem value="banana">Healhcare</SelectItem>
-                      <SelectItem value="blueberry">Education</SelectItem>
-                      <SelectItem value="grapes">Debt Consolidation</SelectItem>
-                      <SelectItem value="pineapple">Housing</SelectItem>
-                      <SelectItem value="pineapple">Other</SelectItem>
+                      <SelectItem value="Healhcare">Healhcare</SelectItem>
+                      <SelectItem value="Education">Education</SelectItem>
+                      <SelectItem value="Debt">Debt Consolidation</SelectItem>
+                      <SelectItem value="Housing">Housing</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -168,7 +172,7 @@ export default function RequestLoan() {
                 </Label>
                 <Select
                   onValueChange={(newValue) => {
-                    console.log("new value of period", newValue)
+                    console.log("new value of period", newValue);
                     const parsedValue = LoanPeriod.safeParse(newValue);
                     if (parsedValue.success)
                       setValue("period", parsedValue.data);
@@ -183,6 +187,7 @@ export default function RequestLoan() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
+                      <SelectItem value="1">1 Month</SelectItem>
                       <SelectItem value="3">3 Months</SelectItem>
                       <SelectItem value="6">6 Months</SelectItem>
                       <SelectItem value="12">1 Year</SelectItem>
@@ -278,19 +283,34 @@ export default function RequestLoan() {
             </div>
           </>
         )}
+        <p className="text-orange-700 text-xs">{error?.message}</p>
         <div className="flex flex-col gap-2">
           <Button
             className="bg-[#DB8323] text-[#ffffff] rounded-xl text-md w-full items-center h-11 disabled:bg-gray-300"
             onClick={() => {
               if (step === 1) {
-                setStep(step + 1);
+                setStep(2);
               }
 
               if (step === 2) {
-                submitFunction();
+                console.log({
+                  amount: web3.utils.toBigInt(formValues.amount),
+                  calculateCollateral: web3.utils.toBigInt(
+                    calculateCollateral.toFixed(0)
+                  ),
+                });
+                writeContract({
+                  ...chainContractConfig["celoAlfajor"].microloan,
+                  functionName: "requestLoan",
+                  value: web3.utils.toBigInt(calculateCollateral.toFixed(0)),
+                  args: [
+                    web3.utils.toBigInt(formValues.amount),
+                    web3.utils.toBigInt(calculateCollateral.toFixed(0)),
+                  ],
+                });
               }
             }}
-            disabled={!isAllowedToContinueForm}
+            disabled={!isAllowedToContinueForm || isPending}
           >
             {step === 1 && "Continue"}
             {step === 2 &&

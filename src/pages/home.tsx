@@ -1,45 +1,68 @@
 import { Button } from "@/components/ui/button";
 import { MdArrowOutward } from "react-icons/md";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {} from "react-icons/io";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { ImFileEmpty } from "react-icons/im";
 import { FaGratipay } from "react-icons/fa";
-
+import web3 from "web3";
+import { useReadContract } from "wagmi";
 
 import { FaPlus } from "react-icons/fa";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { Card } from "@/components/Card";
 import { Header } from "@/components/Layout/Header";
-import { RequestLoanDrawer } from "@/modals/RequestLoanModal";
+import { chainContractConfig } from "@/contexts/chainContext";
+import { useAppKitAccount } from "@reown/appkit/react";
+import { Card } from "@/components/Card";
+import LoanCard from "@/components/LoanCard";
 
 export default function Home() {
   const router = useRouter();
+  const { address } = useAppKitAccount();
+  const { data: lastLoan } = useReadContract({
+    ...chainContractConfig["celoAlfajor"].microloan,
+    functionName: "loanCounter",
+  });
 
-  const transactions = [
-    {
-      name: "Hola",
-      type: "income",
-      amount: 1000,
-      date: "2021-10-10",
-    },
-    {
-      name: "Hola",
-      type: "income",
-      amount: 1000,
-      date: "2021-10-10",
-    },
-    {
-      name: "Hola",
-      type: "income",
-      amount: 1000,
-      date: "2021-10-10",
-    },
-  ];
+  const { data: lastTransaction } = useReadContract({
+    ...chainContractConfig["celoAlfajor"].microloan,
+    functionName: "loans",
+    args: [Number(lastLoan) - 1],
+  });
 
+  const tokenBalance = useReadContract({
+    ...chainContractConfig["celoAlfajor"].token,
+    functionName: "balanceOf",
+    args: [address ?? ""],
+  });
+
+  function numberWithCommas(x: string) {
+    var parts = x?.toString()?.split(".");
+    return (
+      parts[0].replace(/\B(?=(\d{3})+(?=$))/g, ",") +
+      (parts[1] ? "." + parts[1] : "")
+    );
+  }
+
+  const getNumber = (
+    bigNumber: string | undefined | null,
+    fixed: number
+  ): string => {
+    const number = Number(
+      parseFloat(web3.utils.fromWei(Number(bigNumber), "ether"))
+    ).toFixed(fixed);
+
+    return number;
+  };
+
+  const formatNumber = (bigNumber: string | undefined | null): string => {
+    return numberWithCommas(getNumber(bigNumber, 2));
+  };
+
+  console.log("address conver", address);
+  console.log("last loan", lastTransaction);
   return (
     <div className="relative flex flex-col items-center bg-purple-800">
       <div
@@ -71,7 +94,9 @@ export default function Home() {
             <p className="text-start text-gray-300 opacity-50">
               Total balance:
             </p>
-            <p className="font-bold text-2xl text-purple-900">USD $8,323.12</p>
+            <p className="font-bold text-2xl text-purple-900">
+              USD {formatNumber(tokenBalance.data as string)}
+            </p>
           </div>
 
           <div className="relative w-8 h-8">
@@ -86,15 +111,6 @@ export default function Home() {
       </div>
       <div className="w-full bg-warm h-[500px] p-4 pt-12 gap-4 flex flex-col">
         <div className="flex flex-row gap-2 items-end overflow-x-auto">
-        <Button
-            className="rounded-2xl flex flex-row gap-2 bg-yellow-100"
-            onClick={() => {
-              router.push("/request-loan");
-            }}
-          >
-           <FaGratipay color="#000000" className="h-9 w-9"/>
-            <p className="text-black">Pay loan</p>
-          </Button>
           <Button
             className="rounded-2xl flex flex-row gap-2"
             onClick={() => {
@@ -134,38 +150,29 @@ export default function Home() {
         </div>
         <div>
           <div className="flex flex-row justify-between items-end pt-4">
-            <p className="font-bold text-md text-purple-900">
-              Last transactions
-            </p>
+            <p className="font-bold text-md text-purple-900">Your Loans</p>
             <p className="text-xs text-blue-200 cursor-pointer hover:text-blue-300">
               See more
             </p>
           </div>
           <div className="flex flex-col gap-3 pt-2">
-            {transactions.length && (
+            {lastTransaction &&
+            lastTransaction?.[0]?.toLowerCase() === address?.toLowerCase() &&
+            lastTransaction?.[5] === false ? (
+              <LoanCard
+                amountBorrowed={Number(lastTransaction?.[2])}
+                amountToPay={Number(lastTransaction?.[3])}
+                isPaid={lastTransaction?.[5]}
+                name={lastTransaction?.[1]}
+              />
+            ) : (
               <div className="flex flex-col gap-2 justify-center items-center pt-14">
                 <ImFileEmpty className="w-12 h-12 fill-black" />
                 <p className="text-black opacity-40 text-xs font-extralight">
-                  No transactions
+                  You don't have loans to show
                 </p>
               </div>
             )}
-            {/* {transactions.map((transaction) => (
-              <Card key={transaction.name}>
-                <div className="flex flex-col">
-                  <p className="text-purple-900 font-bold">
-                    {transaction.name}
-                  </p>
-                  <p className="text-gray-100 text-xs">{transaction.date}</p>
-                </div>
-                <div className="flex flex-col">
-                  <p className="text-purple-900 font-bold">
-                    {transaction.amount}
-                  </p>
-                  <p className="text-gray-100 text-xs">{transaction.type}</p>
-                </div>
-              </Card>
-            ))} */}
           </div>
         </div>
       </div>
