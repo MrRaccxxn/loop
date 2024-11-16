@@ -2,17 +2,15 @@
 
 import { createAppKit } from "@reown/appkit/react";
 import { EthersAdapter } from "@reown/appkit-adapter-ethers";
-import { mainnet, arbitrum } from "@reown/appkit/networks";
-import Home from "@/pages";
+import {  celoAlfajores, celo } from "@reown/appkit/networks";
 import { ReactNode } from "react";
 
-// 1. Get projectId at https://cloud.reown.com
-const projectId = "YOUR_PROJECT_ID";
+const projectId = process.env.NEXT_PUBLIC_PRIVY_WALLET_CONNECT_APP_ID ?? "";
 
 // 2. Create a metadata object
 const metadata = {
-  name: "My Website",
-  description: "My Website description",
+  name: "www.loop.com",
+  description: "Loop",
   url: "https://mywebsite.com", // origin must match your domain & subdomain
   icons: ["https://avatars.mywebsite.com/"],
 };
@@ -21,11 +19,8 @@ const metadata = {
 createAppKit({
   adapters: [new EthersAdapter()],
   metadata,
-  networks: [mainnet, arbitrum],
+  networks: [celoAlfajores, celo],
   projectId,
-  features: {
-    analytics: true, // Optional - defaults to your Cloud configuration
-  },
 });
 
 export function AppKit({ children }: { children: ReactNode }) {

@@ -3,6 +3,7 @@ import { MdArrowOutward } from "react-icons/md";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {} from "react-icons/io";
 import { IoIosArrowRoundForward } from "react-icons/io";
+import { ImFileEmpty } from "react-icons/im";
 
 import { FaPlus } from "react-icons/fa";
 
@@ -10,6 +11,8 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { Card } from "@/components/Card";
+import { Header } from "@/components/Layout/Header";
+import { RequestLoanDrawer } from "@/modals/RequestLoanModal";
 
 export default function Home() {
   const router = useRouter();
@@ -50,17 +53,8 @@ export default function Home() {
         />
         <div className="absolute inset-0 bg-black opacity-50"></div>
 
-        <div className="absolute top-0 left-0">
-          <div className="flex flex-row gap-2 items-center m-4">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col">
-              <p className="text-white">Hello, Shad</p>
-              <p className="text-white">Welcome back!</p>
-            </div>
-          </div>
+        <div className="absolute top-0 left-0 w-full flex justify-end">
+          <Header />
         </div>
         <div
           className="absolute h-24 bottom-0 rounded-xl w-full text-center p-4 -pt-14 bg-white  -mb-6 -border-spacing-x-8 flex flex-row items-center justify-between"
@@ -75,12 +69,25 @@ export default function Home() {
             </p>
             <p className="font-bold text-2xl text-purple-900">USD $8,323.12</p>
           </div>
-          <div className="">Flag</div>
+
+          <div className="relative w-8 h-8">
+            <Image
+              src={"/icons/usa_flag.svg"}
+              alt="USA"
+              layout="fill"
+              objectFit="contain"
+            />
+          </div>
         </div>
       </div>
       <div className="w-full bg-warm h-[500px] p-4 pt-12 gap-4 flex flex-col">
         <div className="flex flex-row gap-2 items-end">
-          <Button className="rounded-2xl flex flex-row gap-2">
+          <Button
+            className="rounded-2xl flex flex-row gap-2"
+            onClick={() => {
+              router.push("/request-loan");
+            }}
+          >
             <FaPlus />
             Add loan
           </Button>
@@ -121,22 +128,32 @@ export default function Home() {
               See more
             </p>
           </div>
-         <div className="flex flex-col gap-3 pt-2">
-         {transactions.map((transaction) => (
-            <Card key={transaction.name}>
-              <div className="flex flex-col">
-                <p className="text-purple-900 font-bold">{transaction.name}</p>
-                <p className="text-gray-100 text-xs">{transaction.date}</p>
-              </div>
-              <div className="flex flex-col">
-                <p className="text-purple-900 font-bold">
-                  {transaction.amount}
+          <div className="flex flex-col gap-3 pt-2">
+            {transactions.length && (
+              <div className="flex flex-col gap-2 justify-center items-center pt-14">
+                <ImFileEmpty className="w-12 h-12 fill-black" />
+                <p className="text-black opacity-40 text-xs font-extralight">
+                  No transactions
                 </p>
-                <p className="text-gray-100 text-xs">{transaction.type}</p>
               </div>
-            </Card>
-          ))}
-         </div>
+            )}
+            {/* {transactions.map((transaction) => (
+              <Card key={transaction.name}>
+                <div className="flex flex-col">
+                  <p className="text-purple-900 font-bold">
+                    {transaction.name}
+                  </p>
+                  <p className="text-gray-100 text-xs">{transaction.date}</p>
+                </div>
+                <div className="flex flex-col">
+                  <p className="text-purple-900 font-bold">
+                    {transaction.amount}
+                  </p>
+                  <p className="text-gray-100 text-xs">{transaction.type}</p>
+                </div>
+              </Card>
+            ))} */}
+          </div>
         </div>
       </div>
     </div>
