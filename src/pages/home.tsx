@@ -3,7 +3,6 @@ import { MdArrowOutward } from "react-icons/md";
 import {} from "react-icons/io";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { ImFileEmpty } from "react-icons/im";
-import { FaGratipay } from "react-icons/fa";
 import web3 from "web3";
 import { useReadContract } from "wagmi";
 
@@ -15,7 +14,6 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import { Header } from "@/components/Layout/Header";
 import { chainContractConfig } from "@/contexts/chainContext";
 import { useAppKitAccount } from "@reown/appkit/react";
-import { Card } from "@/components/Card";
 import LoanCard from "@/components/LoanCard";
 
 export default function Home() {
@@ -39,30 +37,26 @@ export default function Home() {
   });
 
   function numberWithCommas(x: string) {
-    var parts = x?.toString()?.split(".");
+    const parts = x?.toString()?.split(".");
     return (
       parts[0].replace(/\B(?=(\d{3})+(?=$))/g, ",") +
       (parts[1] ? "." + parts[1] : "")
     );
   }
 
-  const getNumber = (
-    bigNumber: string | undefined | null,
-    fixed: number
-  ): string => {
+  const getNumber = (bigNumber: string | undefined | null): number => {
     const number = Number(
       parseFloat(web3.utils.fromWei(Number(bigNumber), "ether"))
-    ).toFixed(fixed);
+    );
 
     return number;
   };
 
   const formatNumber = (bigNumber: string | undefined | null): string => {
-    return numberWithCommas(getNumber(bigNumber, 2));
+    //@ts-expect-error expecting error
+    return numberWithCommas(getNumber(bigNumber?.toString()));
   };
 
-  console.log("address conver", address);
-  console.log("last loan", lastTransaction);
   return (
     <div className="relative flex flex-col items-center bg-purple-800">
       <div
@@ -157,19 +151,36 @@ export default function Home() {
           </div>
           <div className="flex flex-col gap-3 pt-2">
             {lastTransaction &&
+            //@ts-expect-error expecting error
+
             lastTransaction?.[0]?.toLowerCase() === address?.toLowerCase() &&
+            //@ts-expect-error expecting error
+
             lastTransaction?.[5] === false ? (
               <LoanCard
-                amountBorrowed={Number(lastTransaction?.[2])}
-                amountToPay={Number(lastTransaction?.[3])}
+                //@ts-expect-error expecting error
+
+                amountBorrowed={web3.utils.fromWei(
+                  //@ts-expect-error expecting error
+                  lastTransaction?.[2],
+                  "ether"
+                )}
+                amountToPay={
+                  //@ts-expect-error expecting error
+                  web3.utils.fromWei(lastTransaction?.[3], "ether") * 1000
+                }
+                //@ts-expect-error expecting error
+
                 isPaid={lastTransaction?.[5]}
+                //@ts-expect-error expecting error
+
                 name={lastTransaction?.[1]}
               />
             ) : (
               <div className="flex flex-col gap-2 justify-center items-center pt-14">
                 <ImFileEmpty className="w-12 h-12 fill-black" />
                 <p className="text-black opacity-40 text-xs font-extralight">
-                  You don't have loans to show
+                  You don&apos;t have loans to show
                 </p>
               </div>
             )}

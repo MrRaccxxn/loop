@@ -89,11 +89,11 @@ const LoanCard = ({
         </div>
         <div className="flex justify-between">
           <span className="">Amount Borrowed:</span>
-          <span className="font-medium">${amountBorrowed.toFixed(2)}</span>
+          <span className="font-medium">${amountBorrowed}</span>
         </div>
         <div className="flex justify-between">
           <span className="">Amount to Pay:</span>
-          <span className="font-medium">${amountToPay.toFixed(2)}</span>
+          <span className="font-medium">${amountToPay}</span>
         </div>
       </div>
     </div>

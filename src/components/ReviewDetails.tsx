@@ -25,7 +25,7 @@ const ReviewDetails = ({
       {/* Borrower Details */}
       <div className="mt-6 space-y-4">
         <div className="flex justify-between text-sm">
-          <span style={{ color: "#555555" }}>Borrower's wallet:</span>
+          <span style={{ color: "#555555" }}>Borrower&apos;s wallet:</span>
           <span style={{ color: "#333333" }} className="font-medium">
             {sliceString(name)}
           </span>

@@ -28,7 +28,7 @@ export default function PayLoan() {
     functionName: "loanCounter",
   });
 
-  const { writeContract, isPending, error } = useWriteContract();
+  const { writeContract, isPending } = useWriteContract();
 
   return (
     <div className="bg-purple-800 w-full h-full bg-white">

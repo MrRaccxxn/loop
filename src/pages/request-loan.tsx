@@ -63,13 +63,14 @@ export default function RequestLoan() {
   }, [step, formValues]);
 
   const calculateCollateral = useMemo(() => {
-    return formValues.amount + formValues.amount * 0.05;
+    return (formValues.amount + formValues.amount * 0.25) / 1000;
   }, [formValues.amount]);
 
   const { writeContract, isPending, error, isSuccess } = useWriteContract();
 
   useEffect(() => {
     if (isSuccess) router.push("/home");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess]);
   return (
     <div className="bg-purple-800 w-full h-full bg-white">
@@ -294,18 +295,24 @@ export default function RequestLoan() {
 
               if (step === 2) {
                 console.log({
-                  amount: web3.utils.toBigInt(formValues.amount),
-                  calculateCollateral: web3.utils.toBigInt(
-                    calculateCollateral.toFixed(0)
+                  amount: web3.utils.toWei(formValues.amount, "ether"),
+                  calculateCollateral: web3.utils.toWei(
+                    calculateCollateral,
+                    "ether"
                   ),
                 });
                 writeContract({
                   ...chainContractConfig["celoAlfajor"].microloan,
                   functionName: "requestLoan",
-                  value: web3.utils.toBigInt(calculateCollateral.toFixed(0)),
+                  //@ts-expect-error expecting error
+                  value: web3.utils.toWei(calculateCollateral, "ether"),
                   args: [
-                    web3.utils.toBigInt(formValues.amount),
-                    web3.utils.toBigInt(calculateCollateral.toFixed(0)),
+                    web3.utils.toBigInt(
+                      web3.utils.toWei(formValues.amount, "ether")
+                    ),
+                    web3.utils.toBigInt(
+                      web3.utils.toWei(calculateCollateral, "ether")
+                    ),
                   ],
                 });
               }

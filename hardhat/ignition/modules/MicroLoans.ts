@@ -3,10 +3,9 @@
 
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
-const TOKEN_CELO_ALFAJORES="0xda59399067AbFb905E88eB46A91d81318C68365d";
-
+const TOKEN_CELO_ALFAJORES = "0xc796EeE09c7c88735984b81009b2550ec31F2E2E";
 const MicroLoansModule = buildModule("MicroLoansModule", (m) => {
-  // const loanEligibility = m.contract("Groth16Verifier");
+  // const loanEligibility = m.contract("Token");
   //   return { loanEligibility };
 
   const microLoans = m.contract("MicroLoans", [TOKEN_CELO_ALFAJORES]);
