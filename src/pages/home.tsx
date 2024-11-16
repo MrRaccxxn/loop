@@ -4,6 +4,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {} from "react-icons/io";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { ImFileEmpty } from "react-icons/im";
+import { FaGratipay } from "react-icons/fa";
+
 
 import { FaPlus } from "react-icons/fa";
 
@@ -53,7 +55,9 @@ export default function Home() {
         />
         <div className="absolute inset-0 bg-black opacity-50"></div>
 
-        <div className="absolute top-0 left-0 w-full flex justify-end">
+        <div className="absolute h-20 inset-0 bg-black opacity-20"></div>
+
+        <div className="absolute top-0 left-0 w-full flex justify-end ">
           <Header />
         </div>
         <div
@@ -81,7 +85,16 @@ export default function Home() {
         </div>
       </div>
       <div className="w-full bg-warm h-[500px] p-4 pt-12 gap-4 flex flex-col">
-        <div className="flex flex-row gap-2 items-end">
+        <div className="flex flex-row gap-2 items-end overflow-x-auto">
+        <Button
+            className="rounded-2xl flex flex-row gap-2 bg-yellow-100"
+            onClick={() => {
+              router.push("/request-loan");
+            }}
+          >
+           <FaGratipay color="#000000" className="h-9 w-9"/>
+            <p className="text-black">Pay loan</p>
+          </Button>
           <Button
             className="rounded-2xl flex flex-row gap-2"
             onClick={() => {
