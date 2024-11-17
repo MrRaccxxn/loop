@@ -2,6 +2,8 @@
 
 A **blockchain-powered microloan platform** designed to bring financial inclusion to underserved regions, especially in LATAM and Africa. Built with **Celo** and **Zero-Knowledge Proofs (ZK)** to ensure privacy, scalability, and accessibility.
 
+![](./public/screen.gif)
+
 ---
 
 ## 📝 Table of Contents  
