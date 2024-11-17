@@ -30,6 +30,8 @@ export default function Home() {
     args: [Number(lastLoan) - 1],
   });
 
+  console.log("last ",lastTransaction)
+
   const tokenBalance = useReadContract({
     ...chainContractConfig["celoAlfajor"].token,
     functionName: "balanceOf",

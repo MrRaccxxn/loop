@@ -33,7 +33,7 @@ contract MicroLoans {
     }
 
     uint256 public constant FIXED_COLLATERAL_PERCENTAGE = 25; //25% extra for collateral
-    uint256 public constant FIXED_INTEREST_RATE = 5; // 5% interest
+    uint256 public constant FIXED_INTEREST_RATE = 25; // 5% interest
     uint256 public constant FLUCTUACION_TOLERANCE = 10; //10% fluctuacion tolerance
 
     uint256 public loanCounter;
@@ -106,7 +106,7 @@ contract MicroLoans {
     }
 
     // Lender accepts the loan
-    function acceptLoan(uint256 loanId) public payable {
+    function acceptLoan(uint256 loanId) public {
         Loan storage loan = loans[loanId];
 
         require(loan.lender == address(0), "Loan already accepted");
@@ -119,7 +119,7 @@ contract MicroLoans {
     }
 
     // Borrower repays the loan
-    function repayLoan(uint256 loanId) public payable {
+    function repayLoan(uint256 loanId) public {
         Loan storage loan = loans[loanId];
         require(
             msg.sender == loan.borrower,
@@ -130,12 +130,8 @@ contract MicroLoans {
 
         uint256 totalRepayment = loan.amount +
             ((loan.amount * FIXED_INTEREST_RATE) / 100);
-        require(msg.value == totalRepayment, "Incorrect repayment amount");
 
-        // Transfer repayment to the lender
-        payable(loan.lender).transfer(totalRepayment);
-
-        token().transferFrom(msg.sender, loan.lender, loan.amount);
+        token().transferFrom(msg.sender, loan.lender, totalRepayment);
 
         // Return the collateral to the borrower
         payable(loan.borrower).transfer(loan.collateral);

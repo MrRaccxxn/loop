@@ -1,5 +1,5 @@
 export function sliceString(str: string) {
-  if (str.length <= 8) {
+  if (str?.length <= 8) {
     return str; // If the string is too short, return it as is.
   }
   const first4 = str.slice(0, 4);

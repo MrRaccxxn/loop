@@ -25,7 +25,7 @@ export const Header = () => {
             <p className="text-white text-end">Welcome back!</p>
           </div>
           <Avatar className="h-11 w-11">
-            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarImage src="https://collectiveshift.io/wp-content/uploads/2021/11/Example-of-Noun.png" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
         </div>

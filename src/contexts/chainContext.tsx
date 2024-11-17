@@ -14,7 +14,7 @@ export const chainContractConfig: {
 } = {
   celoAlfajor: {
     microloan: {
-      address: "0xF22A346aA8F901ed73e45Cbd801D679FADf611CA",
+      address: "0xA836A9C7E92923413eB5cf04b576ca0CA0dF7875",
       abi: [
         {
           inputs: [
@@ -139,7 +139,7 @@ export const chainContractConfig: {
           ],
           name: "acceptLoan",
           outputs: [],
-          stateMutability: "payable",
+          stateMutability: "nonpayable",
           type: "function",
         },
         {
@@ -209,7 +209,7 @@ export const chainContractConfig: {
           ],
           name: "repayLoan",
           outputs: [],
-          stateMutability: "payable",
+          stateMutability: "nonpayable",
           type: "function",
         },
         {
