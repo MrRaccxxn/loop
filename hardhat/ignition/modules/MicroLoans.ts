@@ -3,7 +3,7 @@
 
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
-const TOKEN_CELO_ALFAJORES = "0xc796EeE09c7c88735984b81009b2550ec31F2E2E";
+const TOKEN_CELO_ALFAJORES = "0x5f1e2b8A0790E547a7348428a8ea93353aDacb3D";
 const MicroLoansModule = buildModule("MicroLoansModule", (m) => {
   // const loanEligibility = m.contract("Token");
   //   return { loanEligibility };
